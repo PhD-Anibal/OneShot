@@ -43,7 +43,7 @@ A implementação inclui um mecanismo de **debounce via software** para evitar l
         git clone https://github.com/JoseBrunoSouza/Subgrupo-7.git
 2. Compile o código::
 
-       No SDK do VS code aaperte em compilar segundo imagem
+       No SDK do VS code aperte em compilar segundo imagem
    
    ![compilacao](TP_compilar.jpg)
    
