@@ -1,52 +1,63 @@
-#include <stdio.h>
 #include "pico/stdlib.h"
+#include "hardware/gpio.h"
 #include "hardware/timer.h"
 
 #define LED_RED 13
 #define LED_YELLOW 12
 #define LED_GREEN 11
+#define BUTTON 5
 
-volatile int state = 0; // Controla o estado do semáforo
+volatile bool leds_on = false;
 
-bool repeating_timer_callback(struct repeating_timer *t) {
-    // Desliga todos os LEDs
-    gpio_put(LED_RED, 0);
-    gpio_put(LED_YELLOW, 0);
-    gpio_put(LED_GREEN, 0);
+int64_t turn_off_callback(alarm_id_t id, void *user_data);
+//void turn_on_leds();
 
-    // Acende o LED correspondente ao estado
-    if (state == 0) {
+void turn_on_leds() {
+    if (!leds_on) { //se estão desligados os leds entra no if
+        leds_on = true;
         gpio_put(LED_RED, 1);
-    } else if (state == 1) {
         gpio_put(LED_YELLOW, 1);
-    } else {
         gpio_put(LED_GREEN, 1);
+        add_alarm_in_ms(3000, turn_off_callback, (void*)LED_RED, false);
+ 
     }
-
-    // Avança para o próximo estado
-    state = (state + 1) % 3; // O operador módulo (% 3) garante que state sempre fique entre 0, 1 e 2:
-    return true; // Mantém o temporizador repetindo
 }
 
-void config(){
-    stdio_init_all();
-    // Configuração dos pinos dos LEDs
-    gpio_init(LED_RED);
-    gpio_set_dir(LED_RED, GPIO_OUT);
-    gpio_init(LED_YELLOW);
-    gpio_set_dir(LED_YELLOW, GPIO_OUT);
-    gpio_init(LED_GREEN);
-    gpio_set_dir(LED_GREEN, GPIO_OUT);
+int64_t turn_off_callback(alarm_id_t id, void *user_data) {
+    uint led = (uint) user_data;
+    gpio_put(led, 0);
+    
+    if (led == LED_RED) {
+        add_alarm_in_ms(3000, turn_off_callback, (void*)LED_YELLOW, false);
+    } else if (led == LED_YELLOW) {
+        add_alarm_in_ms(3000, turn_off_callback, (void*)LED_GREEN, false);
+    } else if (led == LED_GREEN) {
+        leds_on = false;
+    }
+    
+    return 0;
 }
 
 int main() {
-    config();
-
-    struct repeating_timer timer;
-    add_repeating_timer_ms(3000, repeating_timer_callback, NULL, &timer);
-
-    while (true) {
-        printf("Mais um segundo passou e nem viu\n");
-        sleep_ms(1000);
+    stdio_init_all();
+    
+    gpio_init(LED_RED);
+    gpio_init(LED_YELLOW);
+    gpio_init(LED_GREEN);
+    gpio_init(BUTTON);
+    
+    gpio_set_dir(LED_RED, GPIO_OUT);
+    gpio_set_dir(LED_YELLOW, GPIO_OUT);
+    gpio_set_dir(LED_GREEN, GPIO_OUT);
+    gpio_set_dir(BUTTON, GPIO_IN);
+    gpio_pull_up(BUTTON);
+    
+    while (1) {
+        if (gpio_get(BUTTON) == 0) {
+            //sleep_ms(50);
+            //if (gpio_get(BUTTON) == 0) {
+                turn_on_leds();
+            //}
+        }
     }
 }
