@@ -40,7 +40,7 @@ A implementação inclui um mecanismo de **debounce via software** para evitar l
 ## 🖥️ Como Instalar
 1. Clone este repositório:
    
-        git clone https://github.com/JoseBrunoSouza/Subgrupo-7.git
+        git clone https://github.com/PhD-Anibal/OneShot.git
 2. Compile o código::
 
        No SDK do VS code aperte em compilar segundo imagem
