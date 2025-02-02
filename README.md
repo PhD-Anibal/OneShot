@@ -52,7 +52,7 @@ A implementação inclui um mecanismo de **debounce via software** para evitar l
 4. Esquema de conexões caso não tenha a placa BitDogLab
    
    ![esquema de conexões na placa](projetoOneShot.jpg)
-5. **Pressione os botões** para alternar os padrões exibidos na matriz.
+5. **Pressione o botão A** para ligar os 3 LEDs.
 
 
 ## 📌 Melhorias Futuras
