@@ -69,6 +69,6 @@ int main() {
     gpio_set_irq_enabled_with_callback(BUTTON,GPIO_IRQ_EDGE_FALL, true,&gpio_irq_handler);
 
     while (true) {
-        tight_loop_contents();  // Evita uso excessivo de CPU
+        sleep_ms(10);  // Evita uso excessivo de CPU
     }
 }
